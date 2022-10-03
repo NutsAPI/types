@@ -22,5 +22,8 @@
   "scripts": {
     "build": "ts-node build.ts",
     "prepublishOnly": "npm run build"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
