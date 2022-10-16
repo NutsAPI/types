@@ -15,6 +15,7 @@ import { dependencies } from './package.json';
     minify: true,
     sourcemap: false,
     outdir: './dist',
+    format: 'cjs',
   });
 
   await writeFile(resolve('./dist/index.d.ts'),
