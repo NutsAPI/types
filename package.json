@@ -9,6 +9,9 @@
   "keywords": [
     "nutsapi"
   ],
+  "files": [
+    "./dist"
+  ],
   "devDependencies": {
     "@nutsapi/eslint-config-ts": "^1.0.1",
     "@types/node": "^18.8.0",
