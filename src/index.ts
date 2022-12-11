@@ -1,2 +1,2 @@
 export { HTTP_REQUEST_METHODS, HttpRequestMethod } from './httpMethods';
-export { ApiSchemaBase } from './apiSchemaBase';
+export { ApiSchemaBase, AnyZodType, ApiRequestBase, ApiResponseBase } from './apiSchemaBase';
