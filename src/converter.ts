@@ -17,7 +17,7 @@ export type ConvWorker<T extends Conv> = {
   isObject: (x: unknown) => x is T['object'],
   objectToPayload: (x: T['object']) => T['payload'],
 }; 
-type ConverterArray = [] | [Conv] | [Conv, Conv] | [Conv, Conv, Conv] | [Conv, Conv, Conv, Conv];
+export type ConverterArray = [] | [Conv] | [Conv, Conv] | [Conv, Conv, Conv] | [Conv, Conv, Conv, Conv];
 
 export function convToObject<Convs extends ConverterArray, Base>(x: Base, converters: { [P in keyof Convs]: ConvWorker<Convs[P]> }): ConvChain<Base, Convs, 'payload', 'object'> {
   if(Array.isArray(x)) return x.map(v => { const t = (converters as ConvWorker<Conv>[]).find(c => c.isPayload(v)); return t === undefined ? convToObject<Convs, unknown>(v, converters) : t.payloadToObject(v); }) as ConvChain<Base, Convs, 'payload', 'object'>;
