@@ -1,11 +1,14 @@
-import type { ZodType } from 'zod';
 import type { HttpRequestMethod } from './httpMethods';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AnyZodType = ZodType<any, any, any>;
+export type ZodLike<T> = {
+  _output: T,
+  safeParse: (data: unknown) => { success: true, data: T } | { success: false, error: unknown },
+};
 
-export type ApiRequestBase = AnyZodType;
-export type ApiResponseBase = Record<number, AnyZodType>;
+export type AnyZodLike = ZodLike<any>;
+
+export type ApiRequestBase = AnyZodLike;
+export type ApiResponseBase = Record<number, AnyZodLike>;
 
 export type ApiSchemaBase = Record<
   string,
