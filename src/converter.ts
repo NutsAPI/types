@@ -31,7 +31,13 @@ export function convToPayload<Convs extends Conv[], Base>(x: Base, converters: {
   return converterBase(x, converters.map(v => ({ confirmer: v.isObject, converter: v.objectToPayload }))) as ConvChain<Base, Convs, 'object', 'payload'>;
 }
 
-function converterBase(value: unknown, converters: { confirmer: (x: unknown) => x is unknown, converter: (x: unknown) => unknown }[]) {
+function converterBase(value: unknown, converters: { confirmer: (x: unknown) => x is unknown, converter: (x: unknown) => unknown }[]): unknown{
   const available = converters.find(c => c.confirmer(value));
   if(available !== undefined) return available.converter(value);
+
+  if(Array.isArray(value)) return value.map(v => converterBase(v, converters));
+  
+  if(value !== null && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(v => [v[0], converterBase(v[1], converters)]));
+
+  return value;
 }
