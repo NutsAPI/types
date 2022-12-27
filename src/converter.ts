@@ -3,10 +3,17 @@ export type Conv = Record<ConvType, unknown>;
 type Tail<T> = T extends [unknown, ...infer U] ? U : [];
 
 export type ConvResult<BaseType, T extends Conv, From extends ConvType, To extends Exclude<ConvType, From>>
-  = keyof BaseType extends never ? BaseType : { [P in keyof BaseType]: BaseType[P] extends T[From] ? { __nutsapi_convert_blocked__: T[To] } : keyof BaseType[P] extends '__nutsapi_convert_blocked__' ? BaseType[P] : ConvResult<BaseType[P], T, From, To> };
+  = keyof BaseType extends never ? BaseType : {
+    [P in keyof BaseType]:
+        BaseType[P] extends infer U 
+        ? U extends T[From]
+          ? { __nutsapi_convert_blocked__: T[To] }
+          : keyof BaseType[P] extends '__nutsapi_convert_blocked__' ? BaseType[P] : ConvResult<BaseType[P], T, From, To>
+        : never
+};
 
 type Unblock<T>
-  = keyof T extends never ? T : { [P in keyof T]: T[P] extends { __nutsapi_convert_blocked__: infer U } ? U : Unblock<T[P]> };
+  = keyof T extends never ? T : { [P in keyof T]: T[P] extends infer N ? N extends { __nutsapi_convert_blocked__: infer U } ? U : Unblock<T[P]> : never };
 
 type ConvSolve<BaseType, T extends Conv[], From extends ConvType, To extends Exclude<ConvType, From>>
   = T extends [] ? BaseType : 
