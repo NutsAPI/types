@@ -24,13 +24,14 @@ export type ConvWorker<T extends Conv> = {
 }; 
 
 export function convToObject<Convs extends Conv[], Base>(x: Base, converters: { [P in keyof Convs]: ConvWorker<Convs[P]> }): ConvChain<Base, Convs, 'payload', 'object'> {
-  if(Array.isArray(x)) return x.map(x => convToObject<Convs, unknown>(x, converters)) as ConvChain<Base, Convs, 'payload', 'object'>;
-  if(typeof x === 'object' && x !== null) return Object.fromEntries(Object.entries(x).map(v => [v[0], convToObject<Convs, unknown>(v[1], converters)])) as ConvChain<Base, Convs, 'payload', 'object'>;
-  return (converters.find(c => c.isPayload(x))?.payloadToObject(x) ?? x) as ConvChain<Base, Convs, 'payload', 'object'>;
+  return converterBase(x, converters.map(v => ({ confirmer: v.isPayload, converter: v.payloadToObject }))) as ConvChain<Base, Convs, 'payload', 'object'>;
 }
 
 export function convToPayload<Convs extends Conv[], Base>(x: Base, converters: { [P in keyof Convs]: ConvWorker<Convs[P]> }): ConvChain<Base, Convs, 'object', 'payload'> {
-  if(Array.isArray(x)) return x.map(x => convToPayload<Convs, unknown>(x, converters)) as ConvChain<Base, Convs, 'object', 'payload'>;
-  if(typeof x === 'object' && x !== null) return Object.fromEntries(Object.entries(x).map(v => [v[0], convToPayload<Convs, unknown>(v[1], converters)])) as ConvChain<Base, Convs, 'object', 'payload'>;
-  return (converters.find(c => c.isObject(x))?.objectToPayload(x) ?? x) as ConvChain<Base, Convs, 'object', 'payload'>;
+  return converterBase(x, converters.map(v => ({ confirmer: v.isObject, converter: v.objectToPayload }))) as ConvChain<Base, Convs, 'object', 'payload'>;
+}
+
+function converterBase(value: unknown, converters: { confirmer: (x: unknown) => x is unknown, converter: (x: unknown) => unknown }[]) {
+  const available = converters.find(c => c.confirmer(value));
+  if(available !== undefined) return available.converter(value);
 }
