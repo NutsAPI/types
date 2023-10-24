@@ -14,7 +14,7 @@
   ],
   "devDependencies": {
     "@nutsapi/eslint-config-ts": "^1.0.1",
-    "@types/node": "^18.8.0",
+    "@types/node": "^20.0.0",
     "dts-bundle-generator": "^7.0.0",
     "esbuild": "^0.16.0",
     "eslint": "^8.24.0",
